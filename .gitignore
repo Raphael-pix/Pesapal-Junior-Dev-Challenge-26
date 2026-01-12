@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build output
+dist/
+*.js
+*.js.map
+*.d.ts
+*.d.ts.map
+
+# Database files (generated data)
+data/*.json
+demo-data/*.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# Keep the data directory but ignore contents
+!data/.gitkeep
+!demo-data/.gitkeep
