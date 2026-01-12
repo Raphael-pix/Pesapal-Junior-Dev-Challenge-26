@@ -8,7 +8,7 @@
     "repl": "ts-node src/repl/REPL.ts",
     "web": "ts-node src/web/app.ts",
     "demo": "ts-node src/demo.ts",
-    "clean": "rm -rf dist data/*.json"
+    "clean": "rm -rf dist data/*.json demo-data/*.json"
   },
   "keywords": [
     "database",
