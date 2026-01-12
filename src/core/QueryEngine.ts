@@ -1,11 +1,9 @@
 import {
   Row,
-  ColumnValue,
   WhereCondition,
   QueryResult,
   ValidationError,
   ConstraintError,
-  DatabaseError,
   ColumnDefinition,
 } from "../types";
 import { TableManager } from "./TableManager";
@@ -108,11 +106,11 @@ export class QueryEngine {
 
     // Validate updates won't violate constraints
     for (const { row } of rowsToUpdate) {
-      const updatedRow = { ...row, ...updates };
-      this.validateRow(table.schema.columns, updatedRow, true);
+      const normalizedUpdates = this.normalizeUpdates(updates);
+      this.validateRow(table.schema.columns, normalizedUpdates, true);
 
       // Check constraints (but exclude the current row when checking uniqueness)
-      this.checkConstraints(table, updatedRow, row);
+      this.checkConstraints(table, normalizedUpdates, row);
     }
 
     // Apply updates
@@ -208,6 +206,21 @@ export class QueryEngine {
   }
 
   /**
+   * Sanitize updates before merging
+   */
+  private normalizeUpdates(updates: Partial<Row>): Row {
+    const normalized: Row = {};
+
+    for (const [key, value] of Object.entries(updates)) {
+      if (value !== undefined) {
+        normalized[key] = value;
+      }
+    }
+
+    return normalized;
+  }
+
+  /**
    * Check primary key and unique constraints
    */
   private checkConstraints(table: any, row: Row, excludeRow?: Row): void {
@@ -286,11 +299,14 @@ export class QueryEngine {
         return [];
       }
 
-      return Array.from(rowIds).map((id) => table.rows[id]);
+      //   ! TO BE FIXED
+      return Array.from(rowIds).map((id) => table.rows[id as number]);
     }
 
     // Fall back to full table scan
-    return table.rows.filter((row) => this.rowMatchesCondition(row, where));
+    return table.rows.filter((row: Row) =>
+      this.rowMatchesCondition(row, where)
+    );
   }
 
   /**
