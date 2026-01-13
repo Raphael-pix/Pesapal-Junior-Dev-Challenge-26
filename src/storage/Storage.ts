@@ -1,3 +1,5 @@
+// storage/Storage.ts
+
 import * as fs from "fs";
 import * as path from "path";
 import { Table, TableSchema, Row, HashIndex } from "../types";
@@ -77,6 +79,15 @@ export class Storage {
 
     try {
       const content = fs.readFileSync(filePath, "utf-8");
+
+      // Check if file is empty or contains only whitespace
+      if (!content || content.trim() === "") {
+        console.warn(
+          `Warning: Table file ${tableName}.json is empty. Skipping.`
+        );
+        return null;
+      }
+
       const serialized: SerializedTable = JSON.parse(content);
 
       return {
@@ -86,7 +97,10 @@ export class Storage {
         nextRowId: serialized.nextRowId,
       };
     } catch (error) {
-      throw new Error(`Failed to load table ${tableName}: ${error}`);
+      console.error(`Error loading table ${tableName}: ${error}`);
+      console.warn(`Skipping corrupted table file: ${tableName}.json`);
+      console.warn(`You can delete it with: rm ${filePath}`);
+      return null;
     }
   }
 

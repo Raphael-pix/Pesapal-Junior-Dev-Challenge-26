@@ -106,11 +106,17 @@ export class QueryEngine {
 
     // Validate updates won't violate constraints
     for (const { row } of rowsToUpdate) {
-      const normalizedUpdates = this.normalizeUpdates(updates);
-      this.validateRow(table.schema.columns, normalizedUpdates, true);
+      const updatedRow: Row = { ...row };
+      for (const [key, value] of Object.entries(updates)) {
+        if (value !== undefined) {
+          updatedRow[key] = value;
+        }
+      }
+
+      this.validateRow(table.schema.columns, updatedRow, true);
 
       // Check constraints (but exclude the current row when checking uniqueness)
-      this.checkConstraints(table, normalizedUpdates, row);
+      this.checkConstraints(table, updatedRow, row);
     }
 
     // Apply updates
@@ -206,21 +212,6 @@ export class QueryEngine {
   }
 
   /**
-   * Sanitize updates before merging
-   */
-  private normalizeUpdates(updates: Partial<Row>): Row {
-    const normalized: Row = {};
-
-    for (const [key, value] of Object.entries(updates)) {
-      if (value !== undefined) {
-        normalized[key] = value;
-      }
-    }
-
-    return normalized;
-  }
-
-  /**
    * Check primary key and unique constraints
    */
   private checkConstraints(table: any, row: Row, excludeRow?: Row): void {
@@ -299,7 +290,6 @@ export class QueryEngine {
         return [];
       }
 
-      //   ! TO BE FIXED
       return Array.from(rowIds).map((id) => table.rows[id as number]);
     }
 
