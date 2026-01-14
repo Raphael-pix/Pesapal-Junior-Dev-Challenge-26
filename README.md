@@ -4,18 +4,18 @@ A minimal relational database management system implemented from scratch in Type
 
 ## Features
 
-- ✅ SQL-like query language (CREATE, INSERT, SELECT, UPDATE, DELETE)
-- ✅ Hash-based indexing for fast lookups
-- ✅ Primary key and unique constraints
-- ✅ Persistent storage (JSON files)
-- ✅ INNER JOIN support
-- ✅ Interactive REPL
-- ✅ REST API demo application
+- SQL-like query language (CREATE, INSERT, SELECT, UPDATE, DELETE)
+- Hash-based indexing for fast lookups
+- Primary key and unique constraints
+- Persistent storage (JSON files)
+- INNER JOIN support
+- Interactive REPL
+- REST API demo application
 
 ## Project Structure
 
 ```
-simple-rdbms/
+/
 ├── src/
 │   ├── types/           # Core type definitions
 │   ├── storage/         # Filesystem persistence
@@ -177,11 +177,11 @@ DESCRIBE table_name;
 
 **Tradeoffs:**
 
-- ✅ Simple, human-readable
-- ✅ No external dependencies
-- ❌ Not efficient for large datasets
-- ❌ Entire file rewritten on each change
-- ❌ No transaction log
+- Simple, human-readable
+- No external dependencies
+- Not efficient for large datasets
+- Entire file rewritten on each change
+- No transaction log
 
 **Production Alternative:** Write-ahead logging (WAL), page-based storage, buffer pool management
 
@@ -197,9 +197,9 @@ DESCRIBE table_name;
 
 **Limitations:**
 
-- ❌ Only supports `=` operator
-- ❌ No range queries (`>`, `<`, `BETWEEN`)
-- ❌ No ordering (can't optimize `ORDER BY`)
+- Only supports `=` operator
+- No range queries (`>`, `<`, `BETWEEN`)
+- No ordering (can't optimize `ORDER BY`)
 
 **Production Alternative:** B-tree indexes support range queries and maintain sort order
 
@@ -234,7 +234,7 @@ for each row in left_table:
 
 - 100 × 100 rows: ~10ms
 - 1,000 × 1,000 rows: ~1 second
-- 10,000 × 10,000 rows: ~100 seconds ⚠️
+- 10,000 × 10,000 rows: ~100 seconds
 
 **Production Alternatives:**
 
@@ -269,24 +269,6 @@ for each row in left_table:
 - Default values
 - Auto-increment
 
-## Known Limitations
-
-1. **Concurrency:** No locking. Multiple processes can corrupt data.
-
-2. **Query Language:** Simple regex parser. No subqueries, no AND/OR in WHERE, no aggregate functions (SUM, COUNT), no GROUP BY, no ORDER BY, no LIMIT.
-
-3. **Data Types:** Only string, number, boolean. No dates, binary data, or custom types.
-
-4. **Scale:** Suitable for <10,000 rows. Everything is in memory.
-
-5. **Durability:** No fsync, no atomic writes. Crash during write can corrupt data.
-
-6. **Schema Changes:** No ALTER TABLE. Cannot add/remove columns or change types.
-
-7. **Performance:** No query optimizer, no statistics, no execution plan caching.
-
-8. **Security:** No authentication, no SQL injection prevention, no encryption.
-
 ## Example: Building a Blog
 
 ```sql
@@ -312,61 +294,3 @@ UPDATE posts SET title = 'Hello TypeScript' WHERE id = 1;
 -- Delete
 DELETE FROM posts WHERE id = 3;
 ```
-
-## Testing
-
-Manual testing recommended. Try:
-
-1. **Constraint Violations:**
-
-   ```sql
-   INSERT INTO users (id, username, email) VALUES (1, 'alice', 'alice@test.com');
-   INSERT INTO users (id, username, email) VALUES (1, 'charlie', 'charlie@test.com'); -- Should fail: duplicate id
-   ```
-
-2. **Index Performance:**
-
-   - Create table with 1,000 rows
-   - Compare indexed vs non-indexed SELECT
-
-3. **Join Correctness:**
-
-   - Create users and posts
-   - Verify INNER JOIN produces correct results
-
-4. **Persistence:**
-   - Insert data
-   - Restart REPL
-   - Verify data persists
-
-## Attribution
-
-This project was built as an educational exercise to understand database internals. Implementation guided by:
-
-- **Database Systems Concepts** (Silberschatz, Korth, Sudarshan)
-- **Architecture of a Database System** (Hellerstein, Stonebraker, Hamilton)
-- TypeScript documentation
-- Assistance from Claude (Anthropic AI) for code generation and architecture guidance
-
-## License
-
-MIT License - Free to use for learning purposes.
-
-## Next Steps
-
-To extend this project, consider:
-
-1. **B-tree indexes** for range queries
-2. **Transaction support** with rollback
-3. **Query optimizer** with statistics
-4. **More SQL features** (GROUP BY, ORDER BY, LIMIT, subqueries)
-5. **Better parser** using a proper lexer/parser library
-6. **Concurrency control** with locking or MVCC
-7. **Foreign key constraints**
-8. **More data types** (dates, JSON, arrays)
-9. **Performance testing** with benchmarks
-10. **Binary storage format** instead of JSON
-
----
-
-**Questions or Issues?** This is a learning project. Feel free to experiment and break things!
